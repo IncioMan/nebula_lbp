@@ -40,16 +40,15 @@ hourly_stats_df, ust_traded_prices_df = get_data(data_provider)
 ###
 ###
 st.markdown(f"""
-<div class="date-banner" style=\"font-size: 13px; width: 165px; position: absolute; top: 10px;\">Last update: </div>
-<div class="banner" style=\"max-width: 50px;float: left;z-index: 1\">
-    <a href="https://marsprotocol.io/">
-        <img src="images/nebula.svg" style=\"margin-left: 5px;\" width=\"100px\">
-        <img src="https://raw.githubusercontent.com/IncioMan/mars_lockdrop/master/images/M.png" width=\"100px\">
-        <img src="https://raw.githubusercontent.com/IncioMan/mars_lockdrop/master/images/A.png" width=\"100px\">
-        <img src="https://raw.githubusercontent.com/IncioMan/mars_lockdrop/master/images/R.png" style=\"margin-left: 6px;\" width=\"100px\">
-        <img src="https://raw.githubusercontent.com/IncioMan/mars_lockdrop/master/images/S.png" width=\"100px\">
+<div class="banner" style=\"max-width: 200px;float: left;z-index: 1\">
+    <a href="https://app.neb.money/">
+        <img src="https://raw.githubusercontent.com/IncioMan/nebula_lbp/master/images/nebula.svg" style=\"margin-left: 5px;\" width=\"200px\">
     </a>
-    <div style=\"width: 100px;margin-top: 5px;margin-bottom: 10px;\"><span class="terminated"></span>Terminated</div>
+    <div class='banner-desc-container'>
+        <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco </div>
+        <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco </div>
+    </div>
+    <div style=\"width: 100px;margin-top: 5px;margin-bottom: 10px;\"><span class="blink_me"></span>Active</div>
     <div style=\"border-top: 3px solid #ffffff;width: 100px;margin-top: 15px;padding-bottom: 20px;\"></div>
     <div style=\"width: 100px; margin-left: 10px;\">
         <a href="https://flipsidecrypto.xyz"><img src="https://raw.githubusercontent.com/IncioMan/mars_lockdrop/master//images/fc.png" width=\"30px\"></a>
@@ -59,17 +58,15 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
   
 
-col1, col2,col3 = st.columns([2,8,1])
+col1, col2,col3 = st.columns([3,8,1])
 with col2:
-    st.subheader('Amount of UST locked')
-    st.markdown("""Distribution of UST locked for different durations.""")
+    st.subheader('Price of NEB')
     st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
     st.altair_chart(chart_provider.price_chart(hourly_stats_df), use_container_width=True)
 
-col1, col2,col3 = st.columns([2,8,1])
+col1, col2,col3 = st.columns([3,8,1])
 with col2:
-    st.subheader('Amount of UST locked')
-    st.markdown("""Distribution of UST locked for different durations.""")
+    st.subheader('UST Exchanged at each price')
     st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
     st.altair_chart(chart_provider.ust_traded_prices_chart(ust_traded_prices_df), use_container_width=True)
 
@@ -81,13 +78,13 @@ st.markdown("""
 <style>
     @media (min-width:640px) {
         .block-container {
-            padding-left: 7rem;
+            padding-left: 1rem;
             padding-right: 7rem;
         }
     }
     @media (min-width:800px) {
         .block-container {
-            padding-left: 7rem;
+            padding-left: 5rem;
             padding-right: 7rem;
         }
     }
@@ -119,6 +116,9 @@ hide_streamlit_style = """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 st.markdown("""
     <style>
+    [data-testid="stHeader"]{
+        display: none;
+    }
     .terminated {
         margin-right: 10px;
         width: 10px;
@@ -148,8 +148,8 @@ st.markdown("""
         width: 10px;
         height: 10px;
         display: inline-block;
-        border: 1px solid #FFFFFF;
-        background-color: #FFFFFF;
+        border: 1px solid #21bcd7;
+        background-color: #21bcd7;
         border-radius: 100%;
         }
         @keyframes blinker {
@@ -162,7 +162,7 @@ st.markdown("""
         right: 15px;
     }
 
-    @media (min-width:800px) {
+    @media (min-width:1000px) {
         .css-yksnv9 {
             margin-top: 30px;
         }
@@ -171,9 +171,16 @@ st.markdown("""
         }
         .banner {
             position: fixed;
+            top: 100px;
         }
         .date-banner{
             right: 115px;
+        }
+        .banner-desc-container{
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            min-height: 450px;
         }
     }
     </style>
