@@ -5,43 +5,45 @@ from charts import ChartProvider
 import requests
 from PIL import Image
 from data import DataProvider
-import base64
+from libraries.nebula_lbp_data_charts import NebulaChartProvider, NebulaLBPProvider
 
-st.set_page_config(page_title="Mars Lockdrop - Analytics",\
+st.set_page_config(page_title="Nebula LBP - Analytics",\
         page_icon=Image.open(requests.get('https://raw.githubusercontent.com/IncioMan/mars_lockdrop/master/images/mars_logo_hd.png',stream=True).raw),\
         layout='wide')
 
 ###
 
 @st.cache(ttl=10000, show_spinner=False, allow_output_mutation=True)
-def claim(claim_hash, cols_claim, data_claim):
-    try:
-        df_claim = pd.read_json(
+def claim(claim_hash):
+    df = pd.read_json(
             f"https://api.flipsidecrypto.com/api/v2/queries/{claim_hash}/data/latest",
-            convert_dates=["BLOCK_TIMESTAMP"],
-        )
-    except:
-        return pd.DataFrame(data_claim[claim_hash],columns=cols_claim[claim_hash])
-    if(len(df_claim.columns)==0):
-        return pd.DataFrame(data_claim[claim_hash],columns=cols_claim[claim_hash])
-    return df_claim
+            convert_dates=["BLOCK_TIMESTAMP"])
+    df.columns = [c.lower() for c in df.columns]
+    return df
 
 @st.cache(ttl=10000, show_spinner=False, allow_output_mutation=True, persist=True)
 def get_url(url, index_col):
     return pd.read_csv(url, index_col=index_col)
     
+@st.cache(ttl=10000, show_spinner=False, allow_output_mutation=True, persist=True)
+def get_data(dp):
+    dp.load()
+    dp.parse()
+    return dp.hourly_stats_df, dp.ust_traded_prices_df
 
-data_provider = DataProvider(claim, get_url)
-data_provider.load_data()
-chart_provider = ChartProvider()
+
+data_provider = NebulaLBPProvider(claim)
+chart_provider = NebulaChartProvider()
+
+hourly_stats_df, ust_traded_prices_df = get_data(data_provider)
 
 ###
 ###
 st.markdown(f"""
-<div class="date-banner" style=\"font-size: 13px; width: 165px; position: absolute; top: 10px;\">Last update: {data_provider.last_udpate}</div>
+<div class="date-banner" style=\"font-size: 13px; width: 165px; position: absolute; top: 10px;\">Last update: </div>
 <div class="banner" style=\"max-width: 50px;float: left;z-index: 1\">
     <a href="https://marsprotocol.io/">
-        <img src="https://raw.githubusercontent.com/IncioMan/mars_lockdrop/master/images/mars_logo_hd.png" style=\"margin-left: 5px;\" width=\"100px\">
+        <img src="images/nebula.svg" style=\"margin-left: 5px;\" width=\"100px\">
         <img src="https://raw.githubusercontent.com/IncioMan/mars_lockdrop/master/images/M.png" width=\"100px\">
         <img src="https://raw.githubusercontent.com/IncioMan/mars_lockdrop/master/images/A.png" width=\"100px\">
         <img src="https://raw.githubusercontent.com/IncioMan/mars_lockdrop/master/images/R.png" style=\"margin-left: 6px;\" width=\"100px\">
@@ -55,104 +57,22 @@ st.markdown(f"""
     </div>
 </div>
 """, unsafe_allow_html=True)
-
-col1, col2,col3 = st.columns([2,8,1])
-with col2:
-    st.subheader('Return on Investment')
-    st.markdown("""50M $MARS tokens will be distributed among depositors. The longer you lock your deposit, [the higher the boost you obtain](https://mars-protocol.medium.com/mars-distribution-plan-the-mars-token-launch-lockdrop-and-more-9f6d2dc0995c).""")
-    st.markdown("""Therefore, we can simulate the expected ROI (only rewards from the lockdrop) on each UST locked in each bucket. You simply have to:
-                    <ul> 
-                        <li> Insert what you expect the MARS token price to be </li>
-                        <li> Insert your deposit and lockup period (optional) </li>
-                    </ul>
-                """,unsafe_allow_html=True)
-    #st.markdown("""Expected ROI on single deposited UST if you deposited [] UST for [] and MARS tokens price was []""")
-    
-
-col1, col2, col4,col5 = st.columns([2,6,2,1])
-with col4:
-    st.text("")
-    st.text("")
-    input_deposit = st.number_input('UST deposit', step=1, min_value=0, help='Simulate a deposit of UST to see how this changes the ROI on the different lockup periods')
-    input_duration = st.selectbox('Lockup duration',('3 months', '6 months', '9 months', '12 months', '15 months','18 months'))
-    input_mars_price = st.number_input('$MARS price', value=1.0, step=0.01, min_value=0.01, help='By inserting the expected price of the $MARS tokens we can simulate the ROI on each UST deposited in each lockup period')
-    df, mars_roi_on_deposit = data_provider.get_mars_tokens_aprs(input_deposit, input_duration, input_mars_price)    
-    st.text(f'Rewards: {round(mars_roi_on_deposit,0)} MARS')
-    #df.loc['roi_perc_label'][input_duration]
-with col2:
-    st.altair_chart(chart_provider.simulation_apr_chart(df), use_container_width=True)
-
-
-col1, col2,col3 = st.columns([2,8,1])
-with col2:
-    st.subheader('Lockdrop Metrics')
-col1, col2,col3, col4,col5 = st.columns([3,2,2,2,1])
-with col2:
-    st.metric(label="Total UST locked",\
-            value=f"${round((data_provider.tot_ust/1000000),2)}M")
-with col3:
-    st.metric(label="Number of users", value=f"{data_provider.n_users}")
-with col4:
-    st.metric(label="Number of transactions", value=f"{int(data_provider.n_txs)}")
+  
 
 col1, col2,col3 = st.columns([2,8,1])
 with col2:
     st.subheader('Amount of UST locked')
     st.markdown("""Distribution of UST locked for different durations.""")
     st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
-    st.altair_chart(chart_provider.ust_duration_chart(data_provider.last_duration_amount), use_container_width=True)
+    st.altair_chart(chart_provider.price_chart(hourly_stats_df), use_container_width=True)
 
+col1, col2,col3 = st.columns([2,8,1])
+with col2:
+    st.subheader('Amount of UST locked')
+    st.markdown("""Distribution of UST locked for different durations.""")
+    st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
+    st.altair_chart(chart_provider.ust_traded_prices_chart(ust_traded_prices_df), use_container_width=True)
 
-
-col1, col2, col3 = st.columns([2,8,1])
-with col2:
-    st.subheader('Amount of UST locked over time')
-    st.markdown("""The trend of UST locked for each duration over the course of the lockdrop event.""")
-    st.markdown("""What is the fastest growing duration in terms of locked UST? Are there spikes or is the growth linear?""")
-    st.altair_chart(chart_provider.time_duration_chart(data_provider.time_duration_df), use_container_width=True)
-
-col1, col2, col3, col4 = st.columns([2,4,4,1])
-with col2:
-    st.subheader('Number of transactions over time')
-    st.markdown("""The number of hourly transactions""")
-    st.altair_chart(chart_provider.txs_over_time_chart(data_provider.hourly_stats_df), use_container_width=True)
-with col3:
-    st.subheader('Number of unique users over time')
-    st.markdown("""The cumulative number of unique users locking UST""")
-    st.altair_chart(chart_provider.users_over_time_chart(data_provider.hourly_new_users_df), use_container_width=True)
-  
-
-col1, col2, col3, col4 = st.columns([2,4,4,1])
-with col2:
-    st.subheader('N° of users depositing')
-    st.markdown("The most popular lockup period in terms of number of users depositing may differ from the one with the most UST locked - due to whales activity. Let's therefore look at the number of users.")
-    st.markdown("""Which lockup duration has attracted the most users?""")
-    st.altair_chart(chart_provider.n_duration_users_chart(data_provider.user_stats_df), use_container_width=True)
-with col3:
-    st.subheader('Users vs Number of lockup periods')
-    st.markdown("By plotting the number of different lockup periods in which users have deposited, we can identify behavioral patterns. We can investigate if users have chosen multiple periods or a single one.")
-    st.markdown("""How many different durations have users locked their UST for?""")
-    st.altair_chart(chart_provider.n_duration_wallet_chart(data_provider.count_durations_users), use_container_width=True)
-    
-col1, col2, col3 = st.columns([2,8,1])
-with col2:
-    st.subheader('Participants\' wallet age')
-    st.markdown("""This graph shows the number of wallets participating in the Mars Lockdrop based on the date their wallets are created.""")
-    st.markdown("""Are the participants mainly Terra OGs?""")
-    st.altair_chart(chart_provider.wallet_age_chart(data_provider.wallet_age_df,data_provider.dates_to_mark), use_container_width=True)
-
-col1, col2, col3 = st.columns([2,8,1])
-with col2:
-    st.subheader('Top depositors')
-    st.markdown("""Let's now see the top 5 addresses which have deposited the most UST. If you are curious, you can 
-    look these addresses up on [ET Finder](https://finder.extraterrestrial.money/).""")
-    st.table(data_provider.top_depositors)
-col1, col2, col3 = st.columns([2,8,1])
-with col2:
-    st.subheader('Deposit distribution per balance')
-    st.markdown("""This graph depicts the distribution of UST deposited against the average balance (UST, aUST and bLuna) of the respective wallets. Essentially we are asking the question - are wallets with high average balances depositing more UST or vice versa?""")
-    st.markdown("""You can interact with the graph by zooming in and out to explore specific ranges. Zoom all the way out to see outliers or click on one of the dots to open its [ET Finder](https://finder.extraterrestrial.money/) page.""")
-    st.altair_chart(chart_provider.wallet_balance(data_provider.users_balance_df), use_container_width=True)
 
 
 ###
