@@ -56,15 +56,58 @@ st.markdown(f"""
     </div>
 </div>
 """, unsafe_allow_html=True)
+###
+st.markdown(f"""
+<div class="metrics-banner" style=\"max-width: 200px;float: right;z-index: 1\">
+    <div class='metrics-container'>
+        <div class='metric-container-row'>
+            <div class='metric-container' style=\"border-right: solid #21bcd7; border-bottom: solid #21bcd7;\">
+                <div class='metric-name'>
+                    Price
+                </div>
+                <div class='metric-value'>
+                    0.34$
+                </div>
+            </div>
+            <div class='metric-container' style=\"border-bottom: solid #21bcd7;\">
+                <div class='metric-name'>
+                    Users
+                </div>
+                <div class='metric-value'>
+                    2345
+                </div>
+            </div>
+        </div>
+        <div class='metric-container-row'>
+            <div class='metric-container' style=\"border-right: solid #21bcd7;\">
+                <div class='metric-name'>
+                    Net UST
+                </div>
+                <div class='metric-value'>
+                    2.4M
+                </div>
+            </div>
+            <div class='metric-container'>
+                <div class='metric-name'>
+                    Hours Left
+                </div>
+                <div class='metric-value'>
+                    45
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
   
 
-col1, col2,col3 = st.columns([3,8,1])
+col1, col2,col3 = st.columns([3,8,1.5])
 with col2:
     st.subheader('Price of NEB')
     st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
     st.altair_chart(chart_provider.price_chart(hourly_stats_df), use_container_width=True)
 
-col1, col2,col3 = st.columns([3,8,1])
+col1, col2,col3 = st.columns([3,8,1.5])
 with col2:
     st.subheader('UST Exchanged at each price')
     st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
@@ -162,6 +205,35 @@ st.markdown("""
         right: 15px;
     }
 
+    .metrics-container{
+        min-height: 150px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .metric-container-row{
+        display: flex;
+        width: 160px;
+    }
+    .metric-container{
+        display: flex;
+        flex-direction: column;
+        font-family: sans-serif;
+        padding: 12px;
+        width: 50%;
+    }
+    .metric-name{
+        font-size: 12px;
+        border-bottom: solid;
+        border-color: #21bcd7;
+    }
+    .metric-value{
+        font-size: 20px;
+        
+    }
+
     @media (min-width:1000px) {
         .css-yksnv9 {
             margin-top: 30px;
@@ -172,6 +244,15 @@ st.markdown("""
         .banner {
             position: fixed;
             top: 100px;
+        }
+        .metrics-banner{
+            width: 180px;
+            float: right;
+            z-index: 1;
+            position: fixed;
+            right: 5em;
+            top: 94px;
+            overflow: auto;
         }
         .date-banner{
             right: 115px;
