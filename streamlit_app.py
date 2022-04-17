@@ -29,13 +29,15 @@ def get_url(url, index_col):
 def get_data(dp):
     dp.load()
     dp.parse()
-    return dp.hourly_stats_df, dp.ust_traded_prices_df
+    return dp.hourly_stats_df, dp.ust_traded_prices_df, \
+                dp.first_time_parse_df, dp.first_price_parse_df
 
 
 data_provider = NebulaLBPProvider(claim)
-chart_provider = NebulaChartProvider()
+cp = NebulaChartProvider()
 
-hourly_stats_df, ust_traded_prices_df = get_data(data_provider)
+hourly_stats_df, ust_traded_prices_df, \
+    first_time_df, first_price_df = get_data(data_provider)
 
 ###
 ###
@@ -105,13 +107,25 @@ col1, col2,col3 = st.columns([3,8,1.5])
 with col2:
     st.subheader('Price of NEB')
     st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
-    st.altair_chart(chart_provider.price_chart(hourly_stats_df), use_container_width=True)
+    st.altair_chart(cp.price_chart(hourly_stats_df), use_container_width=True)
 
 col1, col2,col3 = st.columns([3,8,1.5])
 with col2:
     st.subheader('UST Exchanged at each price')
     st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
-    st.altair_chart(chart_provider.ust_traded_prices_chart(ust_traded_prices_df), use_container_width=True)
+    st.altair_chart(cp.ust_traded_prices_chart(ust_traded_prices_df), use_container_width=True)
+
+col1, col2,col3 = st.columns([3,8,1.5])
+with col2:
+    st.subheader('Users\' First Swap (Time)')
+    st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
+    st.altair_chart(cp.first_time_chart(first_time_df), use_container_width=True)
+col1, col2,col3 = st.columns([3,8,1.5])
+with col2:
+    st.subheader('Users\' First Swap (Price)')
+    st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
+    st.altair_chart(cp.first_price_chart(first_price_df), use_container_width=True)
+
 
 
 
