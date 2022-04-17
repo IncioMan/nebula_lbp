@@ -1,3 +1,4 @@
+from tkinter import N
 import streamlit as st
 import pandas as pd
 import altair as alt
@@ -30,19 +31,21 @@ def get_data(dp):
     dp.load()
     dp.parse()
     return dp.hourly_stats_df, dp.ust_traded_prices_df, \
-                dp.first_time_parse_df, dp.first_price_parse_df
+                dp.first_time_parse_df, dp.first_price_parse_df,\
+                    dp.n_prices_per_users_df
 
 
 data_provider = NebulaLBPProvider(claim)
 cp = NebulaChartProvider()
 
 hourly_stats_df, ust_traded_prices_df, \
-    first_time_df, first_price_df = get_data(data_provider)
+    first_time_df, first_price_df,\
+         n_prices_per_users_df = get_data(data_provider)
 
 ###
 ###
 st.markdown(f"""
-<div class="banner" style=\"max-width: 200px;float: left;z-index: 1\">
+<div class="banner" style=\"max-width: 200px;float: left;z-index: 1; padding-top: 20px;\">
     <a href="https://app.neb.money/">
         <img src="https://raw.githubusercontent.com/IncioMan/nebula_lbp/master/images/nebula.svg" style=\"margin-left: 5px;\" width=\"200px\">
     </a>
@@ -60,7 +63,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 ###
 st.markdown(f"""
-<div class="metrics-banner" style=\"max-width: 200px;float: right;z-index: 1\">
+<div class="metrics-banner" style=\"max-width: 200px;float: right;z-index: 1; padding-top: 20px;\">
     <div class='metrics-container'>
         <div class='metric-container-row'>
             <div class='metric-container' style=\"border-right: solid #21bcd7; border-bottom: solid #21bcd7;\">
@@ -125,6 +128,11 @@ with col2:
     st.subheader('Users\' First Swap (Price)')
     st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
     st.altair_chart(cp.first_price_chart(first_price_df), use_container_width=True)
+col1, col2,col3 = st.columns([3,8,1.5])
+with col2:
+    st.subheader('Different Prices Users Bought At')
+    st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
+    st.altair_chart(cp.n_prices_per_users_df_chart(n_prices_per_users_df), use_container_width=True)
 
 
 

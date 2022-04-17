@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[54]:
+# In[143]:
 
 
 import pandas as pd
@@ -12,7 +12,7 @@ import datetime
 alt.renderers.set_embed_options(theme='dark')
 
 
-# In[135]:
+# In[170]:
 
 
 class NebulaLBPProvider:
@@ -44,7 +44,7 @@ class NebulaLBPProvider:
         return df
     
     def get_first_time(self):
-        df = dp.first_tx_df.copy()
+        df = self.first_tx_df.copy()
         cols = ['Number of Users','Time']
         df.columns = cols
         n_data = 20
@@ -68,14 +68,24 @@ class NebulaLBPProvider:
         ust_traded_prices['Amount UST (M)'] = ust_traded_prices['Amount']
         ust_traded_prices['Amount'] = ust_traded_prices['Amount UST (M)'].apply(lambda x: str(round(x,2))+'M')
         return ust_traded_prices
+    
+    def get_n_prices_per_users(self):
+        df = self.buys_ust_df.copy()
+        df.belief_price = df.belief_price.apply(lambda x: round(x,2))
+        df = df.groupby('sender').belief_price.count().reset_index()
+        df = df.groupby('belief_price').sender.count().reset_index()
+        cols = ['Number of Different Prices','Number of Users']
+        df.columns = cols
+        return df
         
     def parse(self):
         self.ust_traded_prices_df =  self.get_ust_traded_prices()
         self.first_price_parse_df =  self.get_first_price()
         self.first_time_parse_df = self.get_first_time()
+        self.n_prices_per_users_df = self.get_n_prices_per_users()
 
 
-# In[136]:
+# In[171]:
 
 
 def claim(claim_hash):
@@ -86,7 +96,7 @@ def claim(claim_hash):
     return df
 
 
-# In[137]:
+# In[187]:
 
 
 class NebulaChartProvider:
@@ -109,7 +119,7 @@ class NebulaChartProvider:
         cols = ['Number of Users','Price']
         chart = alt.Chart(df).mark_bar().encode(
             y=alt.Y(cols[0]+":Q"),
-            x=alt.X(cols[1]+":Q",axis=alt.Axis(tickCount=20, labelAngle=90, tickBand = 'center')),
+            x=alt.X(cols[1]+":Q",axis=alt.Axis(tickCount=20, labelAngle=0, tickBand = 'center')),
             tooltip=[cols[0],cols[1]]
         ).configure_mark(
             color='#21bcd7'
@@ -122,6 +132,19 @@ class NebulaChartProvider:
             y=alt.Y(cols[0]+":Q"),
             x=alt.X(cols[1]+":T"),
             tooltip=[alt.Tooltip(cols[1]+':T', format='%Y-%m-%d %H:%M'), alt.Tooltip(cols[0]+":Q")]
+        ).configure_mark(
+            color='#21bcd7'
+        ).properties(height=300).configure_axisX(
+            labelAngle=0
+        ).configure_view(strokeOpacity=0).configure_axis(grid=False)
+        return chart
+    
+    def n_prices_per_users_df_chart(self,df):
+        cols = ['Number of Users','Number of Different Prices']
+        chart = alt.Chart(df).mark_bar().encode(
+            y=alt.Y(cols[0]+":Q"),
+            x=alt.X(cols[1]+":N",axis=alt.Axis(tickCount=10, labelAngle=30, tickBand = 'center')),
+            tooltip=[cols[1], cols[0]]
         ).configure_mark(
             color='#21bcd7'
         ).properties(height=300).configure_axisX(
