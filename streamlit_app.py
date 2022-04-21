@@ -32,7 +32,8 @@ def get_data(dp):
     dp.parse()
     return dp.hourly_stats_df, dp.ust_traded_prices_df, \
                 dp.first_time_parse_df, dp.first_price_parse_df,\
-                    dp.n_prices_per_users_df, dp.airdrop_in_lbp, dp.lbp_from_airdrop
+                    dp.n_prices_per_users_df, dp.airdrop_in_lbp, dp.lbp_from_airdrop,\
+                        dp.buys_ust_df.sender.nunique()
 
 
 data_provider = NebulaLBPProvider(claim)
@@ -41,7 +42,7 @@ cp = NebulaChartProvider()
 hourly_stats_df, ust_traded_prices_df, \
     first_time_df, first_price_df,\
          n_prices_per_users_df, airdrop_in_lbp, \
-             lbp_from_airdrop = get_data(data_provider)
+             lbp_from_airdrop, n_users = get_data(data_provider)
 
 
 ###
@@ -81,7 +82,7 @@ st.markdown(f"""
                     Users
                 </div>
                 <div class='metric-value'>
-                    2345
+                    {n_users}
                 </div>
             </div>
         </div>
