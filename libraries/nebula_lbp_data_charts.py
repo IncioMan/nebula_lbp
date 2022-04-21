@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[143]:
+# In[6]:
 
 
 import pandas as pd
@@ -12,7 +12,7 @@ import datetime
 alt.renderers.set_embed_options(theme='dark')
 
 
-# In[170]:
+# In[50]:
 
 
 class NebulaLBPProvider:
@@ -25,6 +25,9 @@ class NebulaLBPProvider:
         self.n_users = 'bf67c3a8-530d-4520-b7af-5da5094a255c'
         self.buys_ust = 'ffb18f2a-061f-44b9-9acf-44d509ec4681'
         self.first_price = '5364bf88-617f-40ec-b95f-b3c003fd29f7'
+        self.vote = 'd1cb394d-cda8-41a8-8f0d-030ee74c9d93'
+        self.airdrop = 'd140dd89-7157-4166-95ef-f7813fec7910'
+        self.stake = '90d2caca-80d6-4996-8fe0-ba9a86edd485'
         self.claim = claim
         
     def load(self):
@@ -35,6 +38,9 @@ class NebulaLBPProvider:
         self.n_users_df = self.claim(self.n_users)
         self.buys_ust_df = self.claim(self.buys_ust)
         self.first_price_df = self.claim(self.first_price)
+        self.vote_df = self.claim(self.vote)
+        self.stake_df = self.claim(self.stake)
+        self.airdrop_df = self.claim(self.airdrop)
         
     def get_first_price(self):
         df = self.first_price_df.copy()
@@ -77,15 +83,28 @@ class NebulaLBPProvider:
         cols = ['Number of Different Prices','Number of Users']
         df.columns = cols
         return df
+    
+    def addr_participation(self):
+        dep_addr = set(self.buys_ust_df.sender)
+        airdrop_addr = set(self.airdrop_df.sender)
+        inters_addr = dep_addr.intersection(airdrop_addr)
+        cols = ['Number of Users','Participated in LBP?']
+        airdrop_in_lbp = pd.DataFrame([[len(airdrop_addr) - len(inters_addr), 'No'],
+                     [len(inters_addr), 'Yes']], columns=cols)
+        cols = ['Number of Users','Received The Airdrop?']
+        lbp_from_airdrop = pd.DataFrame([[len(dep_addr) - len(inters_addr), 'No'],
+                     [len(inters_addr), 'Yes']], columns=cols)
+        return airdrop_in_lbp, lbp_from_airdrop
         
     def parse(self):
         self.ust_traded_prices_df =  self.get_ust_traded_prices()
         self.first_price_parse_df =  self.get_first_price()
         self.first_time_parse_df = self.get_first_time()
         self.n_prices_per_users_df = self.get_n_prices_per_users()
+        self.airdrop_in_lbp, self.lbp_from_airdrop = self.addr_participation()
 
 
-# In[171]:
+# In[51]:
 
 
 def claim(claim_hash):
@@ -96,7 +115,7 @@ def claim(claim_hash):
     return df
 
 
-# In[187]:
+# In[52]:
 
 
 class NebulaChartProvider:
@@ -152,6 +171,21 @@ class NebulaChartProvider:
         ).configure_view(strokeOpacity=0).configure_axis(grid=False)
         return chart
     
+    def user_distr_pie(self, df, cols):
+        chart = alt.Chart(df).mark_arc(innerRadius=60).encode(
+            theta=alt.Theta(field=cols[0], type="quantitative"),
+            color=alt.Color(field=cols[1], type="nominal",
+                    #sort=['MARS & UST','MARS','UST'],
+                    scale=alt.Scale(domain=df[cols[1]].unique(), range=['#F24A72','#21bcd7']),
+                    legend=alt.Legend(
+                    orient='none',
+                    padding=10,
+                    legendY=-10,
+                    direction='vertical')),
+            tooltip=[cols[1]+':N',cols[0]+':N']
+        ).configure_view(strokeOpacity=0)
+        return chart
+    
     def price_chart(self,hourly_stats_df):
         #272231 background
         df=hourly_stats_df[['avg_belief_price','time']]
@@ -174,4 +208,7 @@ class NebulaChartProvider:
             labelAngle=0
         ).configure_view(strokeOpacity=0).configure_axis(grid=False)
         return chart
+
+
+
 

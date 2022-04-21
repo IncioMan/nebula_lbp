@@ -32,7 +32,7 @@ def get_data(dp):
     dp.parse()
     return dp.hourly_stats_df, dp.ust_traded_prices_df, \
                 dp.first_time_parse_df, dp.first_price_parse_df,\
-                    dp.n_prices_per_users_df
+                    dp.n_prices_per_users_df, dp.airdrop_in_lbp, dp.lbp_from_airdrop
 
 
 data_provider = NebulaLBPProvider(claim)
@@ -40,7 +40,9 @@ cp = NebulaChartProvider()
 
 hourly_stats_df, ust_traded_prices_df, \
     first_time_df, first_price_df,\
-         n_prices_per_users_df = get_data(data_provider)
+         n_prices_per_users_df, airdrop_in_lbp, \
+             lbp_from_airdrop = get_data(data_provider)
+
 
 ###
 ###
@@ -134,6 +136,15 @@ with col2:
     st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
     st.altair_chart(cp.n_prices_per_users_df_chart(n_prices_per_users_df), use_container_width=True)
 
+col1, col21,col2,col3 = st.columns([3,4,4,1.5])
+with col21:
+    st.subheader('Airdrop Receivers in LBP')
+    st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
+    st.altair_chart(cp.user_distr_pie(airdrop_in_lbp, airdrop_in_lbp.columns), use_container_width=True)
+with col2:
+    st.subheader('LBP Participants Airdrop')
+    st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
+    st.altair_chart(cp.user_distr_pie(lbp_from_airdrop, lbp_from_airdrop.columns), use_container_width=True)
 
 
 
