@@ -48,7 +48,7 @@ hourly_stats_df, ust_traded_prices_df, \
 ###
 ###
 st.markdown(f"""
-<div class="banner" style=\"max-width: 200px;float: left;z-index: 1; padding-top: 20px;\">
+<div class="banner" style=\"max-width: 200px;float: left;z-index: 1;\">
     <a href="https://app.neb.money/">
         <img src="https://raw.githubusercontent.com/IncioMan/nebula_lbp/master/images/nebula.svg" style=\"margin-left: 5px;\" width=\"200px\">
     </a>
@@ -61,7 +61,7 @@ st.markdown(f"""
         </div>
     </div>
     <div style=\"width: 100px;margin-top: 5px;margin-bottom: 10px;\"><span class="blink_me"></span>Active</div>
-    <div style=\"border-top: 3px solid #ffffff;width: 100px;margin-top: 15px;padding-bottom: 20px;\"></div>
+    <div style=\"border-top: 3px solid #ffffff;width: 100px;margin-top: 15px;\"></div>
     <div style=\"width: 100px; margin-left: 10px;\">
         <a href="https://flipsidecrypto.xyz"><img src="https://raw.githubusercontent.com/IncioMan/mars_lockdrop/master//images/fc.png" width=\"30px\"></a>
         <a href="https://twitter.com/IncioMan"><img src="https://raw.githubusercontent.com/IncioMan/mars_lockdrop/master//images/twitter.png" width=\"50px\"></a>
@@ -70,7 +70,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 ###
 st.markdown(f"""
-<div class="metrics-banner" style=\"max-width: 200px;float: right;z-index: 1; padding-top: 20px;\">
+<div class="metrics-banner" style=\"max-width: 200px;float: right;z-index: 1;\">
     <div class='metrics-container'>
         <div class='metric-container-row'>
             <div class='metric-container' style=\"border-right: solid #21bcd7; border-bottom: solid #21bcd7;\">
@@ -187,7 +187,7 @@ st.markdown("""
     .block-container
     {
         padding-bottom: 1rem;
-        padding-top: 5rem;
+        padding-top: 2rem;
     }
     .st-bx{
         background-color: transparent;
@@ -296,7 +296,7 @@ st.markdown("""
         }
         .banner {
             position: fixed;
-            top: 100px;
+            top: 70px;
         }
         .metrics-banner{
             width: 180px;
@@ -304,7 +304,7 @@ st.markdown("""
             z-index: 1;
             position: fixed;
             right: 5em;
-            top: 94px;
+            top: 74px;
             overflow: auto;
         }
         .date-banner{
