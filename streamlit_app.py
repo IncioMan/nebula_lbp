@@ -53,8 +53,12 @@ st.markdown(f"""
         <img src="https://raw.githubusercontent.com/IncioMan/nebula_lbp/master/images/nebula.svg" style=\"margin-left: 5px;\" width=\"200px\">
     </a>
     <div class='banner-desc-container'>
-        <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco </div>
-        <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco </div>
+        <div>
+        Nebula is a protocol built on Terra that enables users to invest in narratives and strategies expressed through decentralized basket instruments called clusters.
+        </div>
+        <div>
+        Liquidity Bootstrapping Pool, it is a mechanism for launching tokens that is designed to defer bot activity by starting the token price high and allowing it to float down to price discovery over a pre-set period of time, in this case 5 days. 
+        </div>
     </div>
     <div style=\"width: 100px;margin-top: 5px;margin-bottom: 10px;\"><span class="blink_me"></span>Active</div>
     <div style=\"border-top: 3px solid #ffffff;width: 100px;margin-top: 15px;padding-bottom: 20px;\"></div>
@@ -112,39 +116,54 @@ st.markdown(f"""
 col1, col2,col3 = st.columns([3,8,1.5])
 with col2:
     st.subheader('Price of NEB')
-    st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
+    st.markdown("""Observe the average buy price over the course of the event.  
+    Has the price been increasing or decreasing over time? After how much time has the price had its first spike?""")
     st.altair_chart(cp.price_chart(hourly_stats_df), use_container_width=True)
 
 col1, col2,col3 = st.columns([3,8,1.5])
 with col2:
     st.subheader('UST Exchanged at each price')
-    st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
+    st.markdown("""UST can either be used to buy NEB or obtained by selling NEB previously bought.  
+    Has the amount of UST used to buy NEB always been greater than the one obtained by selling NEB?""")
     st.altair_chart(cp.ust_traded_prices_chart(ust_traded_prices_df), use_container_width=True)
 
 col1, col2,col3 = st.columns([3,8,1.5])
 with col2:
     st.subheader('Users\' First Swap (Time)')
-    st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
+    st.markdown("""
+    In LBPs being fast might not be the best decision.  
+    What hour did see the highest number of users make their first swap?
+    """)
     st.altair_chart(cp.first_time_chart(first_time_df), use_container_width=True)
 col1, col2,col3 = st.columns([3,8,1.5])
 with col2:
     st.subheader('Users\' First Swap (Price)')
-    st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
+    st.markdown("""
+    In LBPs the price decreases over time if nobody buys or sells from the pool.  
+    At what price did the highest number of users buy the NEB token?
+    """)
     st.altair_chart(cp.first_price_chart(first_price_df), use_container_width=True)
 col1, col2,col3 = st.columns([3,8,1.5])
 with col2:
     st.subheader('Different Prices Users Bought At')
-    st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
+    st.markdown("""
+    Users might DCA or simply buy at several different prices.  
+    At how many different prices have most of the user bought? What is the max n° of different prices per user?
+    """)
     st.altair_chart(cp.n_prices_per_users_df_chart(n_prices_per_users_df), use_container_width=True)
 
 col1, col21,col2,col3 = st.columns([3,4,4,1.5])
 with col21:
     st.subheader('Airdrop Receivers in LBP')
-    st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
+    st.markdown("""
+    Luna stakers have been airdropped some NEB tokens. How many of them are participating 
+    in the LBP?
+    """)
     st.altair_chart(cp.user_distr_pie(airdrop_in_lbp, airdrop_in_lbp.columns), use_container_width=True)
 with col2:
     st.subheader('LBP Participants Airdrop')
-    st.markdown("""Have users preferred shorter or longer durations? Has one duration the largest share?""")
+    st.markdown("""
+    Out of all the LBP participants so far, how many of these have received the Nebula Airdrop?""")
     st.altair_chart(cp.user_distr_pie(lbp_from_airdrop, lbp_from_airdrop.columns), use_container_width=True)
 
 
