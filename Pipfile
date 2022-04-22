@@ -7,7 +7,3 @@ name = "pypi"
 streamlit = "*"
 terra-sdk = "*"
 
-[dev-packages]
-
-[requires]
-python_version = "3.8"
