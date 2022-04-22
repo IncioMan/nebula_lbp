@@ -9,7 +9,7 @@ from data import DataProvider
 from libraries.nebula_lbp_data_charts import NebulaChartProvider, NebulaLBPProvider
 
 st.set_page_config(page_title="Nebula LBP - Analytics",\
-        page_icon=Image.open(requests.get('https://raw.githubusercontent.com/IncioMan/mars_lockdrop/master/images/mars_logo_hd.png',stream=True).raw),\
+        page_icon=Image.open(requests.get('https://raw.githubusercontent.com/IncioMan/nebula_lbp/master/images/logo.png',stream=True).raw),\
         layout='wide')
 
 ###
