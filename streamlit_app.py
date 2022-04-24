@@ -33,7 +33,10 @@ def get_data(dp):
     return dp.hourly_stats_df, dp.ust_traded_prices_df, \
                 dp.first_time_parse_df, dp.first_price_parse_df,\
                     dp.n_prices_per_users_df, dp.airdrop_in_lbp, dp.lbp_from_airdrop,\
-                        dp.buys_ust_df.sender.nunique()
+                        dp.buys_ust_df.sender.nunique(), dp.amount_airdropped_dumped_df, \
+                            dp.sender_airdrop_op_df
+
+
 
 
 data_provider = NebulaLBPProvider(claim)
@@ -42,7 +45,8 @@ cp = NebulaChartProvider()
 hourly_stats_df, ust_traded_prices_df, \
     first_time_df, first_price_df,\
          n_prices_per_users_df, airdrop_in_lbp, \
-             lbp_from_airdrop, n_users = get_data(data_provider)
+             lbp_from_airdrop, n_users, \
+                 amount_airdropped_dumped_df, sender_airdrop_op_df = get_data(data_provider)
 
 
 ###
@@ -165,6 +169,18 @@ with col2:
     st.markdown("""
     Out of all the LBP participants so far, how many of these have received the Nebula Airdrop?""")
     st.altair_chart(cp.user_distr_pie(lbp_from_airdrop, lbp_from_airdrop.columns), use_container_width=True)
+col1, col21,col2,col3 = st.columns([3,4,4,1.5])
+with col21:
+    st.subheader('What Airdrop receivers do?')
+    st.markdown("""
+    How many of the users who claimed their airdrop have sold their NEB? How many have bought more?
+    """)
+    st.altair_chart(cp.sender_airdrop_op_charts(sender_airdrop_op_df, sender_airdrop_op_df.columns), use_container_width=True)
+with col2:
+    st.subheader('Airdrop Retained')
+    st.markdown("""
+    How many of the total NEB airdropped (1M) have been sold by those who received it?""")
+    st.altair_chart(cp.sender_airdrop_op_charts(amount_airdropped_dumped_df, amount_airdropped_dumped_df.columns), use_container_width=True)
 
 
 

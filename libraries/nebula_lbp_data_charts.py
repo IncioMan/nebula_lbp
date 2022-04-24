@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[6]:
+# In[1]:
 
 
 import pandas as pd
@@ -12,7 +12,7 @@ import datetime
 alt.renderers.set_embed_options(theme='dark')
 
 
-# In[50]:
+# In[94]:
 
 
 class NebulaLBPProvider:
@@ -28,6 +28,7 @@ class NebulaLBPProvider:
         self.vote = 'd1cb394d-cda8-41a8-8f0d-030ee74c9d93'
         self.airdrop = 'd140dd89-7157-4166-95ef-f7813fec7910'
         self.stake = '90d2caca-80d6-4996-8fe0-ba9a86edd485'
+        self.buys_sells = 'f6317ba0-be76-4e85-9339-7aa172a5afc0'
         self.claim = claim
         
     def load(self):
@@ -41,6 +42,7 @@ class NebulaLBPProvider:
         self.vote_df = self.claim(self.vote)
         self.stake_df = self.claim(self.stake)
         self.airdrop_df = self.claim(self.airdrop)
+        self.buys_sells_df = self.claim(self.buys_sells)
         
     def get_first_price(self):
         df = self.first_price_df.copy()
@@ -95,6 +97,34 @@ class NebulaLBPProvider:
         lbp_from_airdrop = pd.DataFrame([[len(dep_addr) - len(inters_addr), 'No'],
                      [len(inters_addr), 'Yes']], columns=cols)
         return airdrop_in_lbp, lbp_from_airdrop
+    
+    def sender_airdrop_op(self):
+        sod = {}
+        so = self.buys_sells_df[['sender','type']].drop_duplicates(ignore_index=True)
+        for s, row in so.iterrows():
+            if not row.sender in sod:
+                sod[row.sender] = set()
+            sod[row.sender].add(row.type)
+        data = []
+        for s, ops in sod.items():
+            if('sell' in ops):
+                d = [s, 'Sold']
+            if('buy' in ops):
+                d = [s, 'Bought']
+            if('sell' in ops and 'buy' in ops):
+                d = [s, 'Bought and Sold']
+            data.append(d) 
+        sender_op = pd.DataFrame(data, columns=['sender','operation'])
+        sender_airdrop_op = self.airdrop_df.merge(sender_op,on='sender')[['sender','operation']]\
+                              .groupby('operation').sender.count().reset_index()
+        sender_airdrop_op.columns = ['Actions performed','Number of users']
+        return sender_airdrop_op
+    
+    def amount_airdropped_dumped(self):
+        sold = self.airdrop_df[['sender','tx_id']].merge(self.buys_sells_df[self.buys_sells_df.type=='buy'],on='sender').amount.sum()
+        df = pd.DataFrame([['Sold',sold],
+                     ['Kept', 10000000]], columns=['Type','Amount'])
+        return df
         
     def parse(self):
         self.ust_traded_prices_df =  self.get_ust_traded_prices()
@@ -102,9 +132,11 @@ class NebulaLBPProvider:
         self.first_time_parse_df = self.get_first_time()
         self.n_prices_per_users_df = self.get_n_prices_per_users()
         self.airdrop_in_lbp, self.lbp_from_airdrop = self.addr_participation()
+        self.sender_airdrop_op_df = self.sender_airdrop_op()
+        self.amount_airdropped_dumped_df = self.amount_airdropped_dumped()
 
 
-# In[51]:
+# In[95]:
 
 
 def claim(claim_hash):
@@ -115,7 +147,7 @@ def claim(claim_hash):
     return df
 
 
-# In[52]:
+# In[96]:
 
 
 class NebulaChartProvider:
@@ -186,6 +218,22 @@ class NebulaChartProvider:
         ).configure_view(strokeOpacity=0)
         return chart
     
+    def sender_airdrop_op_charts(self, df, cols):
+        df.columns = cols
+        chart = alt.Chart(df).mark_arc(innerRadius=60).encode(
+                    theta=alt.Theta(field=cols[1], type="quantitative"),
+                    color=alt.Color(field=cols[0], type="nominal",
+                            #sort=['MARS & UST','MARS','UST'],
+                            scale=alt.Scale(domain=df[cols[0]].unique(), range=['#F24A72','#21bcd7']),
+                            legend=alt.Legend(
+                            orient='none',
+                            padding=10,
+                            legendY=-10,
+                            direction='vertical')),
+                    tooltip=[cols[1]+':N',cols[0]+':N']
+                ).configure_view(strokeOpacity=0)
+        return chart
+    
     def price_chart(self,hourly_stats_df):
         #272231 background
         df=hourly_stats_df[['avg_belief_price','time']]
@@ -208,7 +256,3 @@ class NebulaChartProvider:
             labelAngle=0
         ).configure_view(strokeOpacity=0).configure_axis(grid=False)
         return chart
-
-
-
-
