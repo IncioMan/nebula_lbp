@@ -5,6 +5,7 @@ import altair as alt
 from charts import ChartProvider
 import requests
 from PIL import Image
+import datetime
 from data import DataProvider
 from libraries.nebula_lbp_data_charts import NebulaChartProvider, NebulaLBPProvider
 
@@ -34,7 +35,7 @@ def get_data(dp):
                 dp.first_time_parse_df, dp.first_price_parse_df,\
                     dp.n_prices_per_users_df, dp.airdrop_in_lbp, dp.lbp_from_airdrop,\
                         dp.buys_ust_df.sender.nunique(), dp.amount_airdropped_dumped_df, \
-                            dp.sender_airdrop_op_df
+                            dp.sender_airdrop_op_df, dp.net_ust_df
 
 
 
@@ -46,7 +47,8 @@ hourly_stats_df, ust_traded_prices_df, \
     first_time_df, first_price_df,\
          n_prices_per_users_df, airdrop_in_lbp, \
              lbp_from_airdrop, n_users, \
-                 amount_airdropped_dumped_df, sender_airdrop_op_df = get_data(data_provider)
+                 amount_airdropped_dumped_df, sender_airdrop_op_df,\
+                     net_ust_df = get_data(data_provider)
 
 
 ###
@@ -73,6 +75,7 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 ###
+hr_left = round((datetime.datetime(2022, 5, 2, 0, 0, 0, 0) - datetime.datetime.now()).seconds/60,0)
 st.markdown(f"""
 <div class="metrics-banner" style=\"max-width: 200px;float: right;z-index: 1;\">
     <div class='metrics-container'>
@@ -100,7 +103,7 @@ st.markdown(f"""
                     Net UST
                 </div>
                 <div class='metric-value'>
-                    2.4M
+                    {round(net_ust_df/1000000,1)}M
                 </div>
             </div>
             <div class='metric-container'>
@@ -108,7 +111,7 @@ st.markdown(f"""
                     Hours Left
                 </div>
                 <div class='metric-value'>
-                    45
+                    {int(hr_left)}
                 </div>
             </div>
         </div>

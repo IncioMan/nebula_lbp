@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[136]:
 
 
 import pandas as pd
@@ -10,9 +10,8 @@ import warnings
 import requests
 import datetime
 alt.renderers.set_embed_options(theme='dark')
+pd.set_option('display.max_colwidth', None)
 
-
-# In[94]:
 
 
 class NebulaLBPProvider:
@@ -29,6 +28,7 @@ class NebulaLBPProvider:
         self.airdrop = 'd140dd89-7157-4166-95ef-f7813fec7910'
         self.stake = '90d2caca-80d6-4996-8fe0-ba9a86edd485'
         self.buys_sells = 'f6317ba0-be76-4e85-9339-7aa172a5afc0'
+        self.buys_sells_ust = '9934570e-542b-4e3c-bdd2-b9070c22b9a0'
         self.claim = claim
         
     def load(self):
@@ -43,6 +43,7 @@ class NebulaLBPProvider:
         self.stake_df = self.claim(self.stake)
         self.airdrop_df = self.claim(self.airdrop)
         self.buys_sells_df = self.claim(self.buys_sells)
+        self.buys_sells_ust_df = self.claim(self.buys_sells_ust)
         
     def get_first_price(self):
         df = self.first_price_df.copy()
@@ -125,6 +126,12 @@ class NebulaLBPProvider:
         df = pd.DataFrame([['Sold',sold],
                      ['Kept', 10000000]], columns=['Type','Amount'])
         return df
+    
+    def get_net_ust(self):
+        self.buys_sells_ust_df['amount_signed'] = self.buys_sells_ust_df\
+                                                    .apply(lambda row: row.amount if row.type=='buy' \
+                                                                           else -row.amount, axis=1)
+        return self.buys_sells_ust_df.amount_signed.sum()
         
     def parse(self):
         self.ust_traded_prices_df =  self.get_ust_traded_prices()
@@ -134,9 +141,10 @@ class NebulaLBPProvider:
         self.airdrop_in_lbp, self.lbp_from_airdrop = self.addr_participation()
         self.sender_airdrop_op_df = self.sender_airdrop_op()
         self.amount_airdropped_dumped_df = self.amount_airdropped_dumped()
+        self.net_ust_df = self.get_net_ust()
 
 
-# In[95]:
+# In[130]:
 
 
 def claim(claim_hash):
@@ -147,7 +155,7 @@ def claim(claim_hash):
     return df
 
 
-# In[96]:
+# In[131]:
 
 
 class NebulaChartProvider:
