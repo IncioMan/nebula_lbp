@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[138]:
+# In[256]:
 
 
 import pandas as pd
@@ -13,7 +13,7 @@ alt.renderers.set_embed_options(theme='dark')
 pd.set_option('display.max_colwidth', None)
 
 
-# In[223]:
+# In[257]:
 
 
 class NebulaLBPProvider:
@@ -146,7 +146,7 @@ class NebulaLBPProvider:
         self.n_users_df = self.buys_sells_df.sender.nunique()
 
 
-# In[224]:
+# In[258]:
 
 
 def claim(claim_hash):
@@ -157,13 +157,13 @@ def claim(claim_hash):
     return df
 
 
-# In[225]:
+# In[280]:
 
 
 class NebulaChartProvider:
     
     def ust_traded_prices_chart(self, ust_traded_prices):
-        chart = alt.Chart(ust_traded_prices).mark_bar().encode(
+        chart = alt.Chart(ust_traded_prices).mark_point().encode(
         x=alt.X('Price:Q', sort=alt.EncodingSortField(order='ascending')),
         y="Amount UST (M):Q",
         color=alt.Color('Action:N', scale=alt.Scale(domain=['Sold NEB','Bought NEB'],
