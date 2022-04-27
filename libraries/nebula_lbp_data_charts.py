@@ -234,7 +234,7 @@ class NebulaChartProvider:
                     theta=alt.Theta(field=cols[1], type="quantitative"),
                     color=alt.Color(field=cols[0], type="nominal",
                             #sort=['MARS & UST','MARS','UST'],
-                            scale=alt.Scale(domain=df[cols[0]].unique(), range=['#F24A72','#21bcd7','#ffffff']),
+                            scale=alt.Scale(domain=df[cols[0]].unique(), range=['#ffffff','#21bcd7','#F24A72']),
                             legend=alt.Legend(
                             orient='none',
                             padding=10,
@@ -267,5 +267,3 @@ class NebulaChartProvider:
         ).configure_view(strokeOpacity=0).configure_axis(grid=False)
         return chart
 
-
-# In[226]:
