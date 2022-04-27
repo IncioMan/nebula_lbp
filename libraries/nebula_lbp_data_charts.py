@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[136]:
+# In[138]:
 
 
 import pandas as pd
@@ -13,6 +13,8 @@ alt.renderers.set_embed_options(theme='dark')
 pd.set_option('display.max_colwidth', None)
 
 
+# In[223]:
+
 
 class NebulaLBPProvider:
     
@@ -21,7 +23,6 @@ class NebulaLBPProvider:
         self.n_tx_users = '81e1f1ff-f27d-4727-8bbf-3cb7e00dfde3'
         self.hourly_stats = '7a8ea41c-8c5e-4ca7-b466-6844b37b1adc'
         self.ust_traded_prices = '75cb6f4e-a94a-4efa-bc39-187bb7d6c54d'
-        self.n_users = 'bf67c3a8-530d-4520-b7af-5da5094a255c'
         self.buys_ust = 'ffb18f2a-061f-44b9-9acf-44d509ec4681'
         self.first_price = '5364bf88-617f-40ec-b95f-b3c003fd29f7'
         self.vote = 'd1cb394d-cda8-41a8-8f0d-030ee74c9d93'
@@ -36,7 +37,6 @@ class NebulaLBPProvider:
         self.n_tx_users_df = self.claim(self.n_tx_users)
         self.hourly_stats_df = self.claim(self.hourly_stats)
         self.ust_traded_prices_df = self.claim(self.ust_traded_prices)
-        self.n_users_df = self.claim(self.n_users)
         self.buys_ust_df = self.claim(self.buys_ust)
         self.first_price_df = self.claim(self.first_price)
         self.vote_df = self.claim(self.vote)
@@ -47,20 +47,20 @@ class NebulaLBPProvider:
         
     def get_first_price(self):
         df = self.first_price_df.copy()
-        cols = ['Number of Users','Price']
+        cols = ['Price','Number of Users']
         df.columns = cols
         df.Price = df.Price.apply(lambda x: round(x,2))
         return df
     
     def get_first_time(self):
         df = self.first_tx_df.copy()
-        cols = ['Number of Users','Time']
+        cols = ['Time','Number of Users']
         df.columns = cols
         n_data = 20
         if df.Time.nunique() < n_data:
             extra_data = []
             for i in range(n_data-df.Time.nunique()):
-                extra_data.append([None,0,(pd.to_datetime(df.Time.max())+datetime.timedelta(hours=i)).strftime("%Y-%m-%d %H:%M")])
+                extra_data.append([(pd.to_datetime(df.Time.max())+datetime.timedelta(hours=i)).strftime("%Y-%m-%d %H:%M"),0])
             df2 = df.append(pd.DataFrame(extra_data, columns=df.columns))
         else:
             df2 = df
@@ -88,7 +88,7 @@ class NebulaLBPProvider:
         return df
     
     def addr_participation(self):
-        dep_addr = set(self.buys_ust_df.sender)
+        dep_addr = set(self.buys_sells_df.sender)
         airdrop_addr = set(self.airdrop_df.sender)
         inters_addr = dep_addr.intersection(airdrop_addr)
         cols = ['Number of Users','Participated in LBP?']
@@ -124,7 +124,8 @@ class NebulaLBPProvider:
     def amount_airdropped_dumped(self):
         sold = self.airdrop_df[['sender','tx_id']].merge(self.buys_sells_df[self.buys_sells_df.type=='buy'],on='sender').amount.sum()
         df = pd.DataFrame([['Sold',sold],
-                     ['Kept', 10000000]], columns=['Type','Amount'])
+                     ['Kept', 10000000-sold]], columns=['Type','Amount'])
+        df['Amount'] = df['Amount'].apply(lambda x: round(x,2))
         return df
     
     def get_net_ust(self):
@@ -142,9 +143,10 @@ class NebulaLBPProvider:
         self.sender_airdrop_op_df = self.sender_airdrop_op()
         self.amount_airdropped_dumped_df = self.amount_airdropped_dumped()
         self.net_ust_df = self.get_net_ust()
+        self.n_users_df = self.buys_sells_df.sender.nunique()
 
 
-# In[130]:
+# In[224]:
 
 
 def claim(claim_hash):
@@ -155,18 +157,18 @@ def claim(claim_hash):
     return df
 
 
-# In[131]:
+# In[225]:
 
 
 class NebulaChartProvider:
     
     def ust_traded_prices_chart(self, ust_traded_prices):
-        chart = alt.Chart(ust_traded_prices).mark_line(point=True).encode(
+        chart = alt.Chart(ust_traded_prices).mark_bar().encode(
         x=alt.X('Price:Q', sort=alt.EncodingSortField(order='ascending')),
         y="Amount UST (M):Q",
         color=alt.Color('Action:N', scale=alt.Scale(domain=['Sold NEB','Bought NEB'],
                                                       range=['#F24A72','#21bcd7'])),
-        tooltip=['Amount UST (M):N','Price:Q',"Amount:Q"]
+        tooltip=['Action','Amount UST (M):N','Price:Q']
         ).configure_mark(
             color='#21bcd7'
         ).properties(width=700).configure_axisX(
@@ -232,7 +234,7 @@ class NebulaChartProvider:
                     theta=alt.Theta(field=cols[1], type="quantitative"),
                     color=alt.Color(field=cols[0], type="nominal",
                             #sort=['MARS & UST','MARS','UST'],
-                            scale=alt.Scale(domain=df[cols[0]].unique(), range=['#F24A72','#21bcd7']),
+                            scale=alt.Scale(domain=df[cols[0]].unique(), range=['#F24A72','#21bcd7','#ffffff']),
                             legend=alt.Legend(
                             orient='none',
                             padding=10,
@@ -264,3 +266,6 @@ class NebulaChartProvider:
             labelAngle=0
         ).configure_view(strokeOpacity=0).configure_axis(grid=False)
         return chart
+
+
+# In[226]:
