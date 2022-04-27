@@ -31,11 +31,14 @@ def get_url(url, index_col):
 def get_data(dp):
     dp.load()
     dp.parse()
+    maxh = dp.hourly_stats_df.time.apply(lambda x: str(x)).max()
+    df = dp.hourly_stats_df
+    currprice = df[df.time==maxh].avg_belief_price.values[0]
     return dp.hourly_stats_df, dp.ust_traded_prices_df, \
                 dp.first_time_parse_df, dp.first_price_parse_df,\
                     dp.n_prices_per_users_df, dp.airdrop_in_lbp, dp.lbp_from_airdrop,\
                         dp.n_users_df, dp.amount_airdropped_dumped_df, \
-                            dp.sender_airdrop_op_df, dp.net_ust_df
+                            dp.sender_airdrop_op_df, dp.net_ust_df, currprice
 
 
 
@@ -48,7 +51,7 @@ hourly_stats_df, ust_traded_prices_df, \
          n_prices_per_users_df, airdrop_in_lbp, \
              lbp_from_airdrop, n_users, \
                  amount_airdropped_dumped_df, sender_airdrop_op_df,\
-                     net_ust_df = get_data(data_provider)
+                     net_ust_df, currprice= get_data(data_provider)
 
 
 ###
@@ -85,7 +88,7 @@ st.markdown(f"""
                     Price
                 </div>
                 <div class='metric-value'>
-                    0.34$
+                    {currprice}$
                 </div>
             </div>
             <div class='metric-container' style=\"border-bottom: solid #21bcd7;\">
