@@ -58,7 +58,7 @@ hourly_stats_df, ust_traded_prices_df, \
 ###
 st.markdown(f"""
 <div class="banner" style=\"max-width: 200px;float: left;z-index: 1;\">
-    <a href="https://app.neb.money/">
+    <a href="https://lbp.neb.money/">
         <img src="https://raw.githubusercontent.com/IncioMan/nebula_lbp/master/images/nebula.svg" style=\"margin-left: 5px;\" width=\"200px\">
     </a>
     <div class='banner-desc-container'>
