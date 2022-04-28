@@ -21,6 +21,6 @@ jobs:
           git config --global user.name 'IncioMan'
           git config --global user.email 'incio_man@live.com'
           git add ./data/*
-          git commit -am "Automated data fetching"
+          git commit -m "Automated data fetching"
           git push
       - run: echo "🍏 This job's status is ${{ job.status }}."
