@@ -13,7 +13,7 @@ alt.renderers.set_embed_options(theme='dark')
 pd.set_option('display.max_colwidth', None)
 
 
-# In[257]:
+# In[343]:
 
 
 class NebulaLBPProvider:
@@ -144,9 +144,38 @@ class NebulaLBPProvider:
         self.amount_airdropped_dumped_df = self.amount_airdropped_dumped()
         self.net_ust_df = self.get_net_ust()
         self.n_users_df = self.buys_sells_df.sender.nunique()
+        
+    def to_csv(self):
+        path = '../data'
+        self.ust_traded_prices_df.to_csv(f"{path}/ust_traded_prices_df.csv")
+        self.first_price_parse_df.to_csv(f"{path}/first_price_parse_df.csv")
+        self.hourly_stats_df.to_csv(f"{path}/hourly_stats_df.csv")
+        self.first_time_parse_df.to_csv(f"{path}/first_time_parse_df.csv")
+        self.n_prices_per_users_df.to_csv(f"{path}/n_prices_per_users_df.csv")
+        self.airdrop_in_lbp.to_csv(f"{path}/airdrop_in_lbp.csv")
+        self.lbp_from_airdrop.to_csv(f"{path}/lbp_from_airdrop.csv")
+        self.sender_airdrop_op_df.to_csv(f"{path}/sender_airdrop_op_df.csv")
+        self.amount_airdropped_dumped_df.to_csv(f"{path}/amount_airdropped_dumped_df.csv")
+        
+    def read_csv(self):
+        url = 'https://raw.githubusercontent.com/IncioMan/nebula_lbp/master/data/{}.csv'
+        self.ust_traded_prices_df =  pd.read_csv(url.format('ust_traded_prices_df'), index_col=0)
+        self.first_price_parse_df =  pd.read_csv(url.format('first_price_parse_df'), index_col=0)
+        self.hourly_stats_df =  pd.read_csv(url.format('hourly_stats_df'), index_col=0)
+        self.first_time_parse_df = pd.read_csv(url.format('first_time_parse_df'), index_col=0)
+        self.n_prices_per_users_df = pd.read_csv(url.format('n_prices_per_users_df'), index_col=0)
+        self.airdrop_in_lbp = pd.read_csv(url.format('airdrop_in_lbp'), index_col=0)
+        self.lbp_from_airdrop = pd.read_csv(url.format('lbp_from_airdrop'), index_col=0)
+        self.sender_airdrop_op_df = pd.read_csv(url.format('sender_airdrop_op_df'), index_col=0)
+        self.amount_airdropped_dumped_df = pd.read_csv(url.format('amount_airdropped_dumped_df'), index_col=0)
 
 
-# In[258]:
+# In[345]:
+
+
+
+
+# In[301]:
 
 
 def claim(claim_hash):
@@ -157,7 +186,7 @@ def claim(claim_hash):
     return df
 
 
-# In[280]:
+# In[302]:
 
 
 class NebulaChartProvider:
@@ -265,5 +294,4 @@ class NebulaChartProvider:
         ).properties(width=700).configure_axisX(
             labelAngle=0
         ).configure_view(strokeOpacity=0).configure_axis(grid=False)
-        return chart
-
+    
