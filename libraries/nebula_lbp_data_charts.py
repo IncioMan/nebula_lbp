@@ -294,4 +294,5 @@ class NebulaChartProvider:
         ).properties(width=700).configure_axisX(
             labelAngle=0
         ).configure_view(strokeOpacity=0).configure_axis(grid=False)
+        return chart
     

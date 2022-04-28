@@ -29,8 +29,8 @@ def get_url(url, index_col):
     
 @st.cache(ttl=10000, show_spinner=False, allow_output_mutation=True, persist=True)
 def get_data(dp):
-    dp.load()
-    dp.parse()
+    dp = NebulaLBPProvider(claim)
+    dp.read_csv()
     df = dp.hourly_stats_df
     maxh = df[df.avg_belief_price.notna()].time.apply(lambda x: str(x)).max()
     currprice = df[df.time==maxh].avg_belief_price.values[0]
@@ -40,8 +40,8 @@ def get_data(dp):
     return dp.hourly_stats_df, dp.ust_traded_prices_df, \
                 dp.first_time_parse_df, dp.first_price_parse_df,\
                     dp.n_prices_per_users_df, dp.airdrop_in_lbp, dp.lbp_from_airdrop,\
-                        dp.n_users_df, dp.amount_airdropped_dumped_df, \
-                            dp.sender_airdrop_op_df, dp.net_ust_df, round(currprice,2), hr_left
+                        170, dp.amount_airdropped_dumped_df, \
+                            dp.sender_airdrop_op_df, 0.2, round(currprice,2), hr_left
 
 
 
