@@ -78,7 +78,8 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 ###
-hr_left = round((datetime.datetime(2022, 5, 2, 0, 0, 0, 0) - datetime.datetime.now()).seconds/60,0)
+hr_left = (datetime.datetime(2022, 5, 2, 0, 0, 0, 0) - datetime.datetime.now())
+hr_left = int(hr_left.days*24 + hr_left.seconds/3660)
 st.markdown(f"""
 <div class="metrics-banner" style=\"max-width: 200px;float: right;z-index: 1;\">
     <div class='metrics-container'>
@@ -185,7 +186,7 @@ with col21:
 with col2:
     st.subheader('Airdrop Retained')
     st.markdown("""
-    How many of the total NEB airdropped (1M) have been sold by those who received it?""")
+    How many of the total NEB airdropped (10M) have been sold by those who received it?""")
     st.altair_chart(cp.sender_airdrop_op_charts(amount_airdropped_dumped_df, amount_airdropped_dumped_df.columns), use_container_width=True)
 
 
