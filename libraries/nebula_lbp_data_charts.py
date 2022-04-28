@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[256]:
+# In[392]:
 
 
 import pandas as pd
@@ -13,7 +13,7 @@ alt.renderers.set_embed_options(theme='dark')
 pd.set_option('display.max_colwidth', None)
 
 
-# In[343]:
+# In[393]:
 
 
 class NebulaLBPProvider:
@@ -170,12 +170,7 @@ class NebulaLBPProvider:
         self.amount_airdropped_dumped_df = pd.read_csv(url.format('amount_airdropped_dumped_df'), index_col=0)
 
 
-# In[345]:
-
-
-
-
-# In[301]:
+# In[394]:
 
 
 def claim(claim_hash):
@@ -186,7 +181,7 @@ def claim(claim_hash):
     return df
 
 
-# In[302]:
+# In[395]:
 
 
 class NebulaChartProvider:
@@ -207,7 +202,7 @@ class NebulaChartProvider:
     
     def first_price_chart(self,df):
         cols = ['Number of Users','Price']
-        chart = alt.Chart(df).mark_bar().encode(
+        chart = alt.Chart(df).mark_line(point=True).encode(
             y=alt.Y(cols[0]+":Q"),
             x=alt.X(cols[1]+":Q",axis=alt.Axis(tickCount=20, labelAngle=0, tickBand = 'center')),
             tooltip=[cols[0],cols[1]]
@@ -295,4 +290,3 @@ class NebulaChartProvider:
             labelAngle=0
         ).configure_view(strokeOpacity=0).configure_axis(grid=False)
         return chart
-    
