@@ -1,0 +1,26 @@
+name: Data Fetching
+on:
+  workflow_dispatch:
+  schedule:
+    - cron:  '0 6 * * *'
+jobs:
+  fetch-amps-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: code check out
+        uses: actions/checkout@v2
+      - name: setup
+        run: |
+          pip install pipenv
+          pipenv install
+      - name: data fetcher
+        run: |
+          pipenv run python ./data_fetcher.py
+      - name: commit files
+        run: |
+          git config --global user.name 'IncioMan'
+          git config --global user.email 'incio_man@live.com'
+          git add .
+          git commit -am "Automated data fetching"
+          git push
+      - run: echo "🍏 This job's status is ${{ job.status }}."
