@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[392]:
+# In[1]:
 
 
 import pandas as pd
@@ -13,7 +13,7 @@ alt.renderers.set_embed_options(theme='dark')
 pd.set_option('display.max_colwidth', None)
 
 
-# In[393]:
+# In[15]:
 
 
 class NebulaLBPProvider:
@@ -132,7 +132,7 @@ class NebulaLBPProvider:
         self.buys_sells_ust_df['amount_signed'] = self.buys_sells_ust_df\
                                                     .apply(lambda row: row.amount if row.type=='buy' \
                                                                            else -row.amount, axis=1)
-        return self.buys_sells_ust_df.amount_signed.sum()
+        return self.buys_sells_ust_df.amount_signed
         
     def parse(self):
         self.ust_traded_prices_df =  self.get_ust_traded_prices()
@@ -143,7 +143,7 @@ class NebulaLBPProvider:
         self.sender_airdrop_op_df = self.sender_airdrop_op()
         self.amount_airdropped_dumped_df = self.amount_airdropped_dumped()
         self.net_ust_df = self.get_net_ust()
-        self.n_users_df = self.buys_sells_df.sender.nunique()
+        self.n_users_df = self.buys_sells_df.sender
         
     def to_csv(self, path='../data'):
         self.ust_traded_prices_df.to_csv(f"{path}/ust_traded_prices_df.csv")
@@ -155,6 +155,8 @@ class NebulaLBPProvider:
         self.lbp_from_airdrop.to_csv(f"{path}/lbp_from_airdrop.csv")
         self.sender_airdrop_op_df.to_csv(f"{path}/sender_airdrop_op_df.csv")
         self.amount_airdropped_dumped_df.to_csv(f"{path}/amount_airdropped_dumped_df.csv")
+        self.net_ust_df.to_csv(f"{path}/net_ust_df.csv")
+        self.n_users_df.to_csv(f"{path}/n_users_df.csv")
         
     def read_csv(self):
         url = 'https://raw.githubusercontent.com/IncioMan/nebula_lbp/master/data/{}.csv'
@@ -167,9 +169,11 @@ class NebulaLBPProvider:
         self.lbp_from_airdrop = pd.read_csv(url.format('lbp_from_airdrop'), index_col=0)
         self.sender_airdrop_op_df = pd.read_csv(url.format('sender_airdrop_op_df'), index_col=0)
         self.amount_airdropped_dumped_df = pd.read_csv(url.format('amount_airdropped_dumped_df'), index_col=0)
+        self.net_ust_df = pd.read_csv(url.format('net_ust_df'), index_col=0).amount_signed.sum()
+        self.n_users_df = pd.read_csv(url.format('n_users_df'), index_col=0).sender.nunique()
 
 
-# In[394]:
+# In[16]:
 
 
 def claim(claim_hash):
@@ -180,7 +184,7 @@ def claim(claim_hash):
     return df
 
 
-# In[395]:
+# In[17]:
 
 
 class NebulaChartProvider:
