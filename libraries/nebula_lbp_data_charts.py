@@ -145,8 +145,7 @@ class NebulaLBPProvider:
         self.net_ust_df = self.get_net_ust()
         self.n_users_df = self.buys_sells_df.sender.nunique()
         
-    def to_csv(self):
-        path = '../data'
+    def to_csv(self, path='../data'):
         self.ust_traded_prices_df.to_csv(f"{path}/ust_traded_prices_df.csv")
         self.first_price_parse_df.to_csv(f"{path}/first_price_parse_df.csv")
         self.hourly_stats_df.to_csv(f"{path}/hourly_stats_df.csv")
@@ -290,3 +289,4 @@ class NebulaChartProvider:
             labelAngle=0
         ).configure_view(strokeOpacity=0).configure_axis(grid=False)
         return chart
+
