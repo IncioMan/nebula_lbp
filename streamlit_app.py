@@ -34,11 +34,14 @@ def get_data(dp):
     df = dp.hourly_stats_df
     maxh = df[df.avg_belief_price.notna()].time.apply(lambda x: str(x)).max()
     currprice = df[df.time==maxh].avg_belief_price.values[0]
+
+    hr_left = (datetime.datetime(2022, 5, 2, 0, 0, 0, 0) - datetime.datetime.now())
+    hr_left = int(hr_left.days*24 + hr_left.seconds/3660)
     return dp.hourly_stats_df, dp.ust_traded_prices_df, \
                 dp.first_time_parse_df, dp.first_price_parse_df,\
                     dp.n_prices_per_users_df, dp.airdrop_in_lbp, dp.lbp_from_airdrop,\
                         dp.n_users_df, dp.amount_airdropped_dumped_df, \
-                            dp.sender_airdrop_op_df, dp.net_ust_df, round(currprice,2)
+                            dp.sender_airdrop_op_df, dp.net_ust_df, round(currprice,2), hr_left
 
 
 
@@ -51,7 +54,7 @@ hourly_stats_df, ust_traded_prices_df, \
          n_prices_per_users_df, airdrop_in_lbp, \
              lbp_from_airdrop, n_users, \
                  amount_airdropped_dumped_df, sender_airdrop_op_df,\
-                     net_ust_df, currprice= get_data(data_provider)
+                     net_ust_df, currprice, hr_left = get_data(data_provider)
 
 
 ###
@@ -78,8 +81,7 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 ###
-hr_left = (datetime.datetime(2022, 5, 2, 0, 0, 0, 0) - datetime.datetime.now())
-hr_left = int(hr_left.days*24 + hr_left.seconds/3660)
+
 st.markdown(f"""
 <div class="metrics-banner" style=\"max-width: 200px;float: right;z-index: 1;\">
     <div class='metrics-container'>
