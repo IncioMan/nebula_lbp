@@ -40,8 +40,8 @@ def get_data(dp):
     return dp.hourly_stats_df, dp.ust_traded_prices_df, \
                 dp.first_time_parse_df, dp.first_price_parse_df,\
                     dp.n_prices_per_users_df, dp.airdrop_in_lbp, dp.lbp_from_airdrop,\
-                        170, dp.amount_airdropped_dumped_df, \
-                            dp.sender_airdrop_op_df, 200000, round(currprice,2), hr_left
+                        dp.n_users_df, dp.amount_airdropped_dumped_df, \
+                            dp.sender_airdrop_op_df, dp.net_ust_df, round(currprice,2), hr_left
 
 
 
