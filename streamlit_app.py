@@ -31,14 +31,14 @@ def get_url(url, index_col):
 def get_data(dp):
     dp.load()
     dp.parse()
-    maxh = dp.hourly_stats_df.time.apply(lambda x: str(x)).max()
     df = dp.hourly_stats_df
+    maxh = df[df.avg_belief_price.notna()].time.apply(lambda x: str(x)).max()
     currprice = df[df.time==maxh].avg_belief_price.values[0]
     return dp.hourly_stats_df, dp.ust_traded_prices_df, \
                 dp.first_time_parse_df, dp.first_price_parse_df,\
                     dp.n_prices_per_users_df, dp.airdrop_in_lbp, dp.lbp_from_airdrop,\
                         dp.n_users_df, dp.amount_airdropped_dumped_df, \
-                            dp.sender_airdrop_op_df, dp.net_ust_df, currprice
+                            dp.sender_airdrop_op_df, dp.net_ust_df, round(currprice,2)
 
 
 
