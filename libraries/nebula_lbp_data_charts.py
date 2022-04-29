@@ -206,7 +206,7 @@ class NebulaChartProvider:
     def first_price_chart(self,df):
         cols = ['Number of Users','Price']
         chart = alt.Chart(df).mark_line(point=True).encode(
-            y=alt.Y(cols[0]+":Q"),
+            y=alt.Y(cols[0]+":Q", scale=alt.Scale(domainMax=10)),
             x=alt.X(cols[1]+":Q",axis=alt.Axis(tickCount=20, labelAngle=0, tickBand = 'center')),
             tooltip=[cols[0],cols[1]]
         ).configure_mark(
