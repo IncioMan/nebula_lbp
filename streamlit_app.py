@@ -35,7 +35,7 @@ def get_data(dp):
     maxh = df[df.avg_belief_price.notna()].time.apply(lambda x: str(x)).max()
     currprice = df[df.time==maxh].avg_belief_price.values[0]
 
-    hr_left = (datetime.datetime(2022, 5, 2, 0, 0, 0, 0) - datetime.datetime.now())
+    hr_left = (datetime.datetime(2022, 5, 2, 14, 0, 0, 0) - datetime.datetime.now())
     hr_left = int(hr_left.days*24 + hr_left.seconds/3660)
     return dp.hourly_stats_df, dp.ust_traded_prices_df, \
                 dp.first_time_parse_df, dp.first_price_parse_df,\
