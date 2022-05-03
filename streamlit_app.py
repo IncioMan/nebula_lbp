@@ -37,6 +37,7 @@ def get_data(dp):
 
     hr_left = (datetime.datetime(2022, 5, 2, 14, 0, 0, 0) - datetime.datetime.now())
     hr_left = int(hr_left.days*24 + hr_left.seconds/3660)
+    hr_left = 0 if hr_left < 0 else hr_left
     return dp.hourly_stats_df, dp.ust_traded_prices_df, \
                 dp.first_time_parse_df, dp.first_price_parse_df,\
                     dp.n_prices_per_users_df, dp.airdrop_in_lbp, dp.lbp_from_airdrop,\
