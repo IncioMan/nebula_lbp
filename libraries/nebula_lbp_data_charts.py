@@ -36,6 +36,7 @@ class NebulaLBPProvider:
         self.first_tx_df = self.claim(self.first_tx)
         self.n_tx_users_df = self.claim(self.n_tx_users)
         self.hourly_stats_df = self.claim(self.hourly_stats)
+        self.hourly_stats_df.time < '2022-05-02 14:00:00.000'
         self.ust_traded_prices_df = self.claim(self.ust_traded_prices)
         self.buys_ust_df = self.claim(self.buys_ust)
         self.first_price_df = self.claim(self.first_price)
