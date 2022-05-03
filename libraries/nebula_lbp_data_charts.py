@@ -44,7 +44,9 @@ class NebulaLBPProvider:
         self.stake_df = self.claim(self.stake)
         self.airdrop_df = self.claim(self.airdrop)
         self.buys_sells_df = self.claim(self.buys_sells)
+        self.buys_sells_df.block_timestamp < '2022-05-02 14:00:00.000'
         self.buys_sells_ust_df = self.claim(self.buys_sells_ust)
+        self.buys_sells_ust_df.block_timestamp < '2022-05-02 14:00:00.000'
         
     def get_first_price(self):
         df = self.first_price_df.copy()
