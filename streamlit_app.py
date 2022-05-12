@@ -73,7 +73,7 @@ st.markdown(f"""
         Liquidity Bootstrapping Pool, it is a mechanism for launching tokens that is designed to defer bot activity by starting the token price high and allowing it to float down to price discovery over a pre-set period of time, in this case 5 days. 
         </div>
     </div>
-    <div style=\"width: 100px;margin-top: 5px;margin-bottom: 10px;\"><span class="blink_me"></span>Active</div>
+    <div style=\"width: 100px;margin-top: 5px;margin-bottom: 10px;\"><span class="terminated"></span>Terminated</div>
     <div style=\"border-top: 3px solid #ffffff;width: 100px;margin-top: 15px;\"></div>
     <div style=\"width: 100px; margin-left: 10px;\">
         <a href="https://flipsidecrypto.xyz"><img src="https://raw.githubusercontent.com/IncioMan/mars_lockdrop/master//images/fc.png" width=\"30px\"></a>
